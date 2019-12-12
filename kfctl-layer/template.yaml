@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  LayerName:
+    Type: String
+    Default: lambda-layer-kfctl
+    
+    
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: lambda-layer-kfctl
+    Description: "AWS Lambda Layer for the Kubeflow CLI (kfctl) to work with Amazon EKS"
+    Author: Matt McClean
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels: ['layer','lambda', 'eks', 'aws', 'kubernetes', 'k8s', 'kubeflow', 'kfctl']
+    SemanticVersion: 0.7.0
+
+Transform: AWS::Serverless-2016-10-31
+Description: Create a Layer
+
+Resources:
+  LambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Ref LayerName
+      ContentUri: ./layer.zip
+      CompatibleRuntimes: 
+        - provided
+      LicenseInfo: 'Available under the MIT-0 license.'
+      RetentionPolicy: Retain
+
+Outputs:
+  LayerVersionArn:
+    Description: ARN for the published Layer version
+    Value: !Ref LambdaLayer
+    Export:
+      Name: !Sub 'LayerVersionArn-${AWS::StackName}'

@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: eks-kubeflow-cluster
+    Description: "This Lambda function will setup or teardown Kubeflow on an existing k8s cluster"
+    Author: Matt McClean
+    SpdxLicenseId: Apache-2.0
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    SemanticVersion: 1.0.0
+    
+Parameters:
+  ClusterName:
+    Type: String
+    Default: default
+  FunctionName:
+    Type: String
+    Default: KubeflowClusterResourceFunction
+  KubeflowConfigUrl:
+    Type: String
+    Default: https://raw.githubusercontent.com/kubeflow/manifests/v0.7-branch/kfdef/kfctl_aws.0.7.0.yaml    
+  LambdaRoleArn:
+    Type: String
+  AdminIamRoleArn:
+    Type: String    
+  LambdaLayerKubectlArn:
+    Type: String
+  InstanceIamRoleArn:
+    Type: String
+  LambdaLayerKubeflowArn:
+    Type: String    
+  KubeflowStagingS3Bucket:
+    Type: String
+
+Transform: AWS::Serverless-2016-10-31
+Description: kubernetes resource object handler
+Resources:
+  KubeflowClusterResourceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Ref FunctionName
+      Handler: main
+      CodeUri: ./func.d
+      Runtime: provided
+      Layers:
+        - !Ref LambdaLayerKubectlArn
+        - !Ref LambdaLayerKubeflowArn
+      MemorySize: 512
+      Environment:
+        Variables:
+          region: !Sub "${AWS::Region}"
+      Role: !Ref LambdaRoleArn
+      Timeout: 300
+
+  KubeflowCluster:
+    Type: Custom::KubeflowCluster
+    Properties:
+      ServiceToken: !GetAtt KubeflowClusterResourceFunction.Arn
+      ClusterName: !Ref ClusterName
+      KubeflowConfigUrl: !Ref KubeflowConfigUrl
+      KubeflowStagingS3Bucket: !Ref KubeflowStagingS3Bucket
+      AdminIamRoleArn: !Ref AdminIamRoleArn
+      InstanceIamRoleArn: !Ref InstanceIamRoleArn
+
+Outputs:
+  LambdaFuncArn:
+    Description: Lambda Func ARN
+    Value: !GetAtt KubeflowClusterResourceFunction.Arn
+  LambdaFuncName:
+    Description: Lambda Func Name
+    Value: !Ref KubeflowClusterResourceFunction
+  LambdaRoleArn:
+    Description: Lambda Role ARN
+    Value: !Ref LambdaRoleArn

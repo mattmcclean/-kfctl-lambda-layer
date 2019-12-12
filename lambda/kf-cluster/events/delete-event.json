@@ -1,0 +1,16 @@
+{
+  "RequestType" : "Delete",
+  "RequestId" : "9db53695-b0a0-47d6-908a-ea2d8a3ab5d7",
+  "ResponseURL" : "http://pre-signed-S3-url-for-response",
+  "ResourceType" : "Custom::KubeflowCluster",
+  "LogicalResourceId" : "KubeflowCluster",
+  "StackId" : "arn:aws:cloudformation:us-east-1:123456789012:stack/MyStack/guid",
+  "ResourceProperties" : {
+    "StackName": "my-stack-name",
+    "ClusterName": "cluster-7ad22172-8f8d-4114-b7f0-d92793a055db",
+    "AdminIamRoleArn": "arn:aws:iam::934676248949:role/KubeflowCdkExampleStack-AdminRole38563C57-1AQ0CXNFXV8AO",
+    "InstanceIamRoleArn": "arn:aws:iam::934676248949:role/KubeflowCdkExampleStack-helloeksDefaultCapacityIns-UOH1I534QJUG",
+    "KubeflowConfigUrl" : "https://raw.githubusercontent.com/kubeflow/manifests/v0.7-branch/kfdef/kfctl_aws.0.7.0.yaml",
+    "KubeflowStagingS3Bucket" : "kubeflow-demo-mmcclean-eu-west-1"
+  }
+} 
